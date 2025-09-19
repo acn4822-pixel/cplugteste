@@ -1,0 +1,3 @@
+$user = User::first();
+$token = $user->createToken("token-inventario");
+echo $token->accessToken;
