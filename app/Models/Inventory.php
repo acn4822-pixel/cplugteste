@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inventory extends Model
 {
-    //
+    protected $fillable = [
+        'sku',
+        'quantity',
+        'product_id'
+    ];
 }

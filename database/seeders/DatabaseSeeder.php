@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // Limpa as tabelas na ordem correta (filhas para pais)
         DB::table('users')->truncate();
         DB::table('sale_items')->truncate();
-        DB::table('inventory')->truncate();
+        DB::table('inventories')->truncate();
         DB::table('sales')->truncate();
         DB::table('products')->truncate();
         
