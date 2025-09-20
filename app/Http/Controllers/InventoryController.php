@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Inventory;
+use App\Jobs\CleanOldInventoryRecords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -80,5 +81,16 @@ class InventoryController extends Controller
                 'quantity' => $validated['quantity']
             ]
         ], 201);
+    }
+
+    public function cleanInventory(Request $request)
+    {
+        // Dispara o job para ser executado
+        //CleanOldInventoryRecords::dispatch();
+        (new CleanOldInventoryRecords())->handle();
+
+        return response()->json([
+            'message' => 'Job de limpeza do inventory foi disparado.'
+        ], 200);
     }
 }

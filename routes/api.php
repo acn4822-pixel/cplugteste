@@ -24,8 +24,14 @@ Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'inde
 // Rota para atualização do inventário
 Route::post('/inventory', [App\Http\Controllers\InventoryController::class, 'store']);
 
+// Rota para limpeza do inventário
+Route::post('/inventory/clean', [App\Http\Controllers\InventoryController::class, 'cleanInventory']);
+
 // Rota para registro de vendas
 Route::post('/sale', [App\Http\Controllers\SaleController::class, 'store']);
+
+// Rota para atualização de estoque - sales->status = pending
+Route::post('/sale/process-pending', [App\Http\Controllers\SaleController::class, 'processPendingSales']);
 
 // Rota para obter detalhes de uma venda específica
 Route::get('/sale/{id}', [App\Http\Controllers\SaleController::class, 'show']);

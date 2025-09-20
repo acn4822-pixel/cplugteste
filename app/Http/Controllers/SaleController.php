@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Inventory;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Jobs\ProcessPendingSales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -120,7 +121,8 @@ class SaleController extends Controller
 
     public function show($id)
     {
-        $sale = Sale::with('items')->find($id);
+        //$sale = Sale::with('items')->find($id);
+        $sale = Sale::with('items.product')->find($id);
 
         if (!$sale) {
             return response()->json(['message' => 'Venda não encontrada.'], 404);
@@ -131,4 +133,14 @@ class SaleController extends Controller
             'data' => $sale
         ], 200);
     }    
+
+    public function processPendingSales(Request $request)
+    {
+        // Execução síncrona do Job, como solução temporária.
+        (new ProcessPendingSales())->handle();
+
+        return response()->json([
+            'message' => 'O processamento das vendas pendentes foi concluído.'
+        ], 200);
+    }  
 }
