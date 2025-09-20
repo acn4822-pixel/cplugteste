@@ -28,4 +28,11 @@ class Product extends Model
 
         return $sku;
     }    
+
+    /*
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }    
+    */
 }

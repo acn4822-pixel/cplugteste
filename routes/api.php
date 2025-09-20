@@ -26,3 +26,9 @@ Route::post('/inventory', [App\Http\Controllers\InventoryController::class, 'sto
 
 // Rota para registro de vendas
 Route::post('/sale', [App\Http\Controllers\SaleController::class, 'store']);
+
+// Rota para obter detalhes de uma venda específica
+Route::get('/sale/{id}', [App\Http\Controllers\SaleController::class, 'show']);
+
+// Rota para obter relatório de vendas
+Route::get('/reports/sales', [App\Http\Controllers\ReportController::class, 'sales']);

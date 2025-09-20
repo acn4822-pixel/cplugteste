@@ -117,4 +117,18 @@ class SaleController extends Controller
             'total_cost' => $totalCost
         ], 201);
     } 
+
+    public function show($id)
+    {
+        $sale = Sale::with('items')->find($id);
+
+        if (!$sale) {
+            return response()->json(['message' => 'Venda não encontrada.'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Detalhes da venda obtidos com sucesso.',
+            'data' => $sale
+        ], 200);
+    }    
 }
