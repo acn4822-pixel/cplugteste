@@ -18,5 +18,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Rota para o inventário
+// Rota para obter a situação do inventário
+Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index']);
+
+// Rota para atualização do inventário
 Route::post('/inventory', [App\Http\Controllers\InventoryController::class, 'store']);
+
+// Rota para registro de vendas
+Route::post('/sale', [App\Http\Controllers\SaleController::class, 'store']);

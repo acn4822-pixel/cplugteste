@@ -6,11 +6,34 @@ use App\Models\Product;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class InventoryController extends Controller
 {
+
     /**
-     * Store a new product entry in the inventory.
+     * Obter o status do inventário.
+     */        
+    public function index()
+    {
+        $inventorySummary = DB::table('products')
+            ->leftJoin('inventories', 'products.sku', '=', 'inventories.sku')
+            ->select(
+                'products.sku',
+                'products.name',
+                DB::raw('COALESCE(SUM(inventories.quantity), 0) as total_quantity')
+            )
+            ->groupBy('products.sku', 'products.name')
+            ->get();
+
+        return response()->json([
+            'message' => 'Situação do estoque obtida com sucesso.',
+            'data' => $inventorySummary
+        ], 200);
+    }
+
+    /**
+     * Criar novo registro de entrada no inventory.
      */
     public function store(Request $request)
     {
@@ -32,23 +55,24 @@ class InventoryController extends Controller
         // Pega os dados validados
         $validated = $validator->validated();
 
-        // 1. Procura o produto pelo SKU
+        // Procura o produto pelo SKU
         $product = Product::where('sku', $validated['sku'])->first();
 
-        // 2. Se o produto não for encontrado, retorna um erro
+        // Se o produto não for encontrado, retorna um erro
         if (!$product) {
             return response()->json([
                 'message' => 'O produto com este SKU não existe.'
             ], 404);
         }
 
-        // 3. Se o produto for encontrado, cria um novo registro na tabela 'inventory'
+        // Se o produto for encontrado, cria um novo registro na tabela 'inventory'
         Inventory::create([
             'sku' => $validated['sku'],
             'quantity' => $validated['quantity'],
             'product_id' => $product->id
         ]);
 
+        // Sucesso
         return response()->json([
             'message' => 'Entrada de produto registrada com sucesso.',
             'data' => [
