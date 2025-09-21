@@ -8,6 +8,7 @@ use App\Jobs\CleanOldInventoryRecords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class InventoryController extends Controller
 {
@@ -17,15 +18,18 @@ class InventoryController extends Controller
      */        
     public function index()
     {
-        $inventorySummary = DB::table('products')
-            ->leftJoin('inventories', 'products.sku', '=', 'inventories.sku')
-            ->select(
-                'products.sku',
-                'products.name',
-                DB::raw('COALESCE(SUM(inventories.quantity), 0) as total_quantity')
-            )
-            ->groupBy('products.sku', 'products.name')
-            ->get();
+        // Usa o Cache::remember() para armazenar a consulta por 60 minutos
+        $inventorySummary = Cache::remember('inventory_summary', 60 * 60, function () {
+            return DB::table('products')
+                ->leftJoin('inventories', 'products.sku', '=', 'inventories.sku')
+                ->select(
+                    'products.sku',
+                    'products.name',
+                    DB::raw('COALESCE(SUM(inventories.quantity), 0) as total_quantity')
+                )
+                ->groupBy('products.sku', 'products.name')
+                ->get();
+        });
 
         return response()->json([
             'message' => 'Situação do estoque obtida com sucesso.',
@@ -73,6 +77,9 @@ class InventoryController extends Controller
             'product_id' => $product->id
         ]);
 
+        // Apaga o cache
+        Cache::forget('inventory_summary');
+
         // Sucesso
         return response()->json([
             'message' => 'Entrada de produto registrada com sucesso.',
@@ -89,6 +96,8 @@ class InventoryController extends Controller
         //CleanOldInventoryRecords::dispatch();
         (new CleanOldInventoryRecords())->handle();
 
+        Cache::forget('inventory_summary');
+        
         return response()->json([
             'message' => 'Job de limpeza do inventory foi disparado.'
         ], 200);

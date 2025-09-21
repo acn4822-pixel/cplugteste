@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Sale;
 use App\Models\Inventory;
+use App\Models\Product;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,12 +23,13 @@ class ProcessPendingSales implements ShouldQueue
                             ->with('items.product')
                             ->get();
         
-        Log::info("Encontradas {$pendingSales->count()} vendas pendentes para processar.");
-
         foreach ($pendingSales as $sale) {
             try {
                 DB::transaction(function () use ($sale) {
                     foreach ($sale->items as $item) {
+
+                        $product = Product::where('sku', $item->product->sku)->lockForUpdate()->first();
+
                         Inventory::create([
                             'product_id' => $item->product->id,
                             'sku' => $item->product->sku,
@@ -38,7 +40,6 @@ class ProcessPendingSales implements ShouldQueue
                     $sale->status = 'completed';
                     $sale->save();
                 });
-                Log::info("Venda ID: {$sale->id} processada com sucesso.");
 
             } catch (\Exception $e) {
                 Log::error("Erro ao processar a venda ID: {$sale->id}. Erro: " . $e->getMessage());
