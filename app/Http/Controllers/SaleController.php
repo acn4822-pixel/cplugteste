@@ -83,6 +83,7 @@ class SaleController extends Controller
                 ]);
 
                 if(!is_null($updateInventory)) {
+                    
                     // Atualiza o registro de inventário em tempo real com quantidade negativa
                     Inventory::create([
                         'product_id' => $product->id,
@@ -91,6 +92,7 @@ class SaleController extends Controller
                     ]);
 
                     Cache::forget('inventory_summary');
+
                 }
 
                 // Calcula os totais
@@ -149,4 +151,4 @@ class SaleController extends Controller
             'message' => 'O processamento das vendas pendentes foi concluído.'
         ], 200);
     }  
-}
+}git status
