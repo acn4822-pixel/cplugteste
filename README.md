@@ -120,10 +120,6 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
 
 ## Passo 6: Executar os jobs
 
-1. **Inicie o servidor de desenvolvimento do Laravel para executar o projeto:**
-    ```bash
-    php artisan serve
-    ```
 1. **Iniciar a execução dos Jobs**  
     Estão para executar a cada minuto como teste configurados em routes/console.php.  
     Abra um terminal novo e separado.  
@@ -136,4 +132,18 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
     Ele pode ser adicionado ao cron do sistema operacional  
     ```bash
     php artisan schedule:run
+    ```
+
+## Passo 7: Chamada de teste unitário 
+
+1. **Geral**
+    ```bash
+    php artisan test
     ```    
+
+2. **Inventário**  
+    ```bash
+    php artisan test tests/Feature/InventoryControllerTest.php
+    ```    
+
+    
