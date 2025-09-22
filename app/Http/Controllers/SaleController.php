@@ -10,6 +10,7 @@ use App\Jobs\ProcessPendingSales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class SaleController extends Controller
 {
@@ -88,6 +89,8 @@ class SaleController extends Controller
                         'sku' => $item['sku'],
                         'quantity' => -$item['quantity']
                     ]);
+
+                    Cache::forget('inventory_summary');
                 }
 
                 // Calcula os totais
@@ -102,7 +105,8 @@ class SaleController extends Controller
                 'total_profit' => $totalAmount - $totalCost,
                 'status' => !is_null($updateInventory)?'completed':'pending'
             ]);
-           DB::commit();
+
+            DB::commit();
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -138,6 +142,8 @@ class SaleController extends Controller
     {
         // Execução síncrona do Job, como solução temporária.
         (new ProcessPendingSales())->handle();
+        
+        Cache::forget('inventory_summary');
 
         return response()->json([
             'message' => 'O processamento das vendas pendentes foi concluído.'
