@@ -94,7 +94,7 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
     -H "Content-Type: application/json" \
     -d '{"sku": "<SKU_DO_PRODUTO>", "quantity": 10}'
    ```
-3. **Limpeza do inventário (POST) - Executando como api**
+3. **Limpeza do inventário - Elimina registros antigos do inventário (POST) - Executando como api**
    ```bash
     curl -X POST http://127.0.0.1:8000/api/inventory/clean
    ```
@@ -108,7 +108,7 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
    ```bash
     curl -X GET http://127.0.0.1:8000/api/sale/<ID_DA_VENDA>
    ```
-6. **Processa Vendas pendentes - Baixa estoque (POST) - Executando como api**
+6. **Processa Vendas pendentes - Baixa estoque (Cria registro de baixa no inventário) (POST) - Executando como api**
    ```bash
    curl -X POST http://127.0.0.1:8000/api/sale/process-pending
    ```
@@ -121,6 +121,10 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
 ## Passo 6: Executar os jobs
 
 1. **Iniciar a execução dos Jobs**  
+
+    a. Limpeza do inventário - Elimina registros antigos do inventário.
+    b. Processa Vendas pendentes - Baixa estoque (Cria registro de baixa no inventário).
+   
     Estão para executar a cada minuto como teste configurados em routes/console.php.  
     Abra um terminal novo e separado.  
     Rode o comando abaixo e mantenha-o rodando:  
