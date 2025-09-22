@@ -67,7 +67,7 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
     ```bash
     php artisan migrate
     ```
-4. **Execute o seeder: (popular com dados mocados)**
+4. **Execute o seeder (popular com dados mocados):**
     ```bash
     php artisan db:seed
     ```
@@ -75,7 +75,65 @@ O SQLite já está incluso nas instalações do PHP do Laragon e XAMPP.
 ---
 
 ## Passo 4: Execução do Projeto
-Inicie o servidor de desenvolvimento do Laravel para executar o projeto:
 
-```bash
-php artisan serve
+1. **Inicie o servidor de desenvolvimento do Laravel para executar o projeto:**
+    ```bash
+    php artisan serve
+    ```
+---
+
+## Passo 5: Url's para execução das api's
+
+1. **Listar o Inventário (GET):**
+   ```bash
+    curl -X GET http://127.0.0.1:8000/api/inventory
+   ```
+2. **Registrar uma Entrada de Inventário (POST)**
+   ```bash
+    curl -X POST http://127.0.0.1:8000/api/inventory \
+    -H "Content-Type: application/json" \
+    -d '{"sku": "<SKU_DO_PRODUTO>", "quantity": 10}'
+   ```
+3. **Limpeza do inventário (POST) - Executando como api**
+   ```bash
+    curl -X POST http://127.0.0.1:8000/api/inventory/clean
+   ```
+4. **Registrar uma nova Venda (POST)**
+   ```bash
+    curl -X POST http://127.0.0.1:8000/api/sale \
+    -H "Content-Type: application/json" \
+    -d '{"items": [{"sku":"<SKU_DO_PRODUTO>", "quantity": 1}]}'
+   ```
+5. **Consultar uma Venda (GET)**
+   ```bash
+    curl -X GET http://127.0.0.1:8000/api/sale/<ID_DA_VENDA>
+   ```
+6. **Processa Vendas pendentes - Baixa estoque (POST) - Executando como api**
+   ```bash
+   curl -X POST http://127.0.0.1:8000/api/sale/process-pending
+   ```
+7. **Relatório de Vendas (GET)**
+   ```bash
+    curl -X GET "http://127.0.0.1:8000/api/reports/sales?start_date=<DATA_INICIAL>&end_date=<DATA_FINAL>&product_sku=<SKU_DO_PRODUTO>"
+    ```
+---
+
+## Passo 6: Executar os jobs
+
+1. **Inicie o servidor de desenvolvimento do Laravel para executar o projeto:**
+    ```bash
+    php artisan serve
+    ```
+1. **Iniciar a execução dos Jobs**  
+    Estão para executar a cada minuto como teste configurados em routes/console.php.  
+    Abra um terminal novo e separado.  
+    Rode o comando abaixo e mantenha-o rodando:  
+    ```bash
+    php artisan optimize:clear
+    php artisan queue:work
+    ```    
+    Agora, no seu outro terminal, rode o comando do agendador:  
+    Ele pode ser adicionado ao cron do sistema operacional  
+    ```bash
+    php artisan schedule:run
+    ```    
